@@ -30,14 +30,25 @@
 
 size_t              NF, NR;
 size_t              current;
+size_t             *filter_active_cells = NULL;
+size_t             *mpi_map_mapping_array = NULL;
 all_vars_struct    *all_vars = NULL;
 atmos_data_struct  *atmos = NULL;
 dmy_struct         *dmy = NULL;
 filenames_struct    filenames;
 filep_struct        filep;
 domain_struct       global_domain;
+domain_struct       local_domain;
 global_param_struct global_param;
 lake_con_struct     lake_con;
+MPI_Datatype        mpi_global_struct_type;
+MPI_Datatype        mpi_location_struct_type;
+MPI_Datatype        mpi_option_struct_type;
+MPI_Datatype        mpi_param_struct_type;
+int                *mpi_map_local_array_sizes = NULL;
+int                *mpi_map_global_array_offsets = NULL;
+int                 mpi_rank;
+int                 mpi_size;
 nc_file_struct      nc_hist_file;
 nc_var_struct       nc_vars[N_OUTVAR_TYPES];
 option_struct       options;
@@ -63,11 +74,25 @@ int
 main(int    argc,
      char **argv)
 {
+    int status;
+
+    // Initialize MPI - note: logging not yet initialized
+    status = MPI_Init(&argc, &argv);
+    if (status != MPI_SUCCESS) {
+        fprintf(stderr, "MPI error in main(): %d\n", status);
+        exit(EXIT_FAILURE);
+    }
+
     // Initialize Log Destination
     initialize_log();
 
+    // initialize mpi
+    initialize_mpi();
+
     // process command line arguments
-    cmd_proc(argc, argv, filenames.global);
+    if (mpi_rank == 0) {
+        cmd_proc(argc, argv, filenames.global);
+    }
 
     // read global parameters
     vic_start();
@@ -103,6 +128,12 @@ main(int    argc,
 
     // clean up
     vic_finalize();
+
+    // finalize MPI
+    status = MPI_Finalize();
+    if (status != MPI_SUCCESS) {
+        log_err("MPI error in main(): %d\n", status);
+    }
 
     return EXIT_SUCCESS;
 }
