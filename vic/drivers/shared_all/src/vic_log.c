@@ -1,12 +1,8 @@
 /******************************************************************************
  * @section DESCRIPTION
  *
- * calculates nitrogen scaling factors for all canopy layers, following eqns
- * 106 and 107 in Knorr 1997.
- *
- * Note: this should only be applied to veg types that have a canopy, e.g.
- * trees and shrubs, but not grass or tundra vegetation.
- *
+ * These routines control log functions for VIC
+ * 
  * @section LICENSE
  *
  * The Variable Infiltration Capacity (VIC) macroscale hydrological model
