@@ -2,7 +2,7 @@
  * @section DESCRIPTION
  *
  * These routines control log functions for VIC
- * 
+ *
  * @section LICENSE
  *
  * The Variable Infiltration Capacity (VIC) macroscale hydrological model
@@ -115,7 +115,9 @@ setup_logging(int    id,
     extern FILE *LOG_DEST;
     char         logfilename[MAXSTRING];
 
-    if (strcmp(log_path, "MISSING") != 0) {
+    // Create a log file if the log_path is not missing and the log level is
+    // less than LOG_ERR_LVL. Otherwise just log to stderr.
+    if (strcmp(log_path, "MISSING") != 0 && LOG_LVL < LOG_ERR_LVL) {
         // Create logfile name
         get_logname(log_path, id, logfilename);
 
@@ -153,8 +155,9 @@ print_trace(void)
     /* Note: we are ignoring the first and last stack frame
        the first is this function, the last is the linker, neither are
        particularly useful */
-    fprintf(LOG_DEST,
-            "---------------------------------------------------------------------------\n");
+    fprintf(
+        LOG_DEST,
+        "---------------------------------------------------------------------------\n");
     fprintf(LOG_DEST, "Traceback (most recent call last):\n");
     for (i = size - 2; i > 0; i--) {
         fprintf(LOG_DEST, "%s\n", strings[i]);

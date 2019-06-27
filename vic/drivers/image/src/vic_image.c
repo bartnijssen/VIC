@@ -130,12 +130,15 @@ main(int    argc,
     // initialize output structures
     vic_init_output(&(dmy[0]));
 
-    // Initialization is complete, print settings
-    log_info(
-        "Initialization is complete, print global param, parameters and options structures");
-    print_global_param(&global_param);
-    print_option(&options);
-    print_parameters(&param);
+    if (LOG_LVL < LOG_WARN_LVL && mpi_rank == VIC_MPI_ROOT) {
+        // Initialization is complete, print settings
+        log_info(
+            "Initialization is complete, print global param, "
+            "parameters and options structures");
+        print_global_param(&global_param);
+        print_option(&options);
+        print_parameters(&param);
+    }
 
     // stop init timer
     timer_stop(&(global_timers[TIMER_VIC_INIT]));
