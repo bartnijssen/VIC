@@ -75,13 +75,13 @@ make_dmy(global_param_struct *global)
         offset =
             (unsigned int) ((double) (SEC_PER_DAY -
                                       start_dmy.dayseconds) / global->dt);
-        if ((((unsigned int) global->dt *
-              (global->nrecs - offset)) % SEC_PER_DAY) !=
-            0) {
-            log_err("Nrecs must be defined such that the model ends after "
-                    "completing a full day.  Currently Nrecs is set to %zu.",
-                    global->nrecs);
-        }
+        // if ((((unsigned int) global->dt *
+        //       (global->nrecs - offset)) % SEC_PER_DAY) !=
+        //     0) {
+        //     log_err("Nrecs must be defined such that the model ends after "
+        //             "completing a full day.  Currently Nrecs is set to %zu.",
+        //             global->nrecs);
+        // }
     }
 
     /** Determine number of forcing records to skip before model start time **/

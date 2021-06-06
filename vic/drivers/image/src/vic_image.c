@@ -158,8 +158,11 @@ main(int    argc,
         timer_stop(&(global_timers[TIMER_VIC_WRITE]));
 
         // Write state file
-        if (check_save_state_flag(current, &dmy_state)) {
-            debug("writing state file for timestep %zu", current);
+        if (current + 1 < global_param.nrecs) {
+            vic_store(&(dmy[current + 1]), state_filename);
+            debug("finished storing state file: %s", state_filename)
+        }
+        else if (check_save_state_flag(current, &dmy_state)) {
             vic_store(&dmy_state, state_filename);
             debug("finished storing state file: %s", state_filename)
         }
@@ -172,11 +175,12 @@ main(int    argc,
     vic_image_finalize();
 
     // clean up routing
-    rout_finalize();    // Routing routine (extension)
+    rout_finalize(); // Routing routine (extension)
 
     // finalize MPI
     status = MPI_Finalize();
-    if (status != MPI_SUCCESS) {
+    if (status != MPI_SUCCESS)
+    {
         log_err("MPI error: %d", status);
     }
 
@@ -187,7 +191,8 @@ main(int    argc,
     // stop vic all timer
     timer_stop(&(global_timers[TIMER_VIC_ALL]));
 
-    if (mpi_rank == VIC_MPI_ROOT) {
+    if (mpi_rank == VIC_MPI_ROOT)
+    {
         // write timing info
         write_vic_timing_table(global_timers, VIC_DRIVER);
     }
